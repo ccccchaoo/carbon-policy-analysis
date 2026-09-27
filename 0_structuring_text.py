@@ -13,8 +13,8 @@ for domain in DOMAIN:
         print(f"Files for domain {domain} already exist, skipping...")
         continue
     
-    query_file_dic = get_files(QUERY_MATCH[domain][0])  
-    match_file_dic = get_files(QUERY_MATCH[domain][1])  
+    query_file_dic = get_files(QUERY_MATCH[domain][0])  # 获取中央的政策文件
+    match_file_dic = get_files(QUERY_MATCH[domain][1])  # 获取地方的政策文件
 
     query_items = packaging_for_search(query_file_dic)
     match_items = packaging_for_search(match_file_dic)

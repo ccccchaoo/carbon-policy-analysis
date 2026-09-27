@@ -1,0 +1,34 @@
+# Downloaded model weights (retrieve them from Hugging Face; see README)
+models/
+
+# Reproducible embedding caches
+data/embeddings/
+
+# Generated text-matching, robustness, network, and figure outputs.
+# Keep the compact econometric-validation directory eligible for versioning.
+results/*
+!results/DID/
+!results/DID/**
+
+# Large model/checkpoint formats: guard against accidental commits elsewhere
+*.safetensors
+*.bin
+*.onnx
+*.onnx_data
+*.pt
+*.pth
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Editors, operating systems, and temporary files
+.vscode/
+.DS_Store
+Thumbs.db
+~$*
+tmp/
+
