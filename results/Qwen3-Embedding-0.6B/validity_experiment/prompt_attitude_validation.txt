@@ -1,0 +1,200 @@
+You are an expert annotator of policy texts. Your task is to construct an independent validation set for measuring **policy-attitude intensity differences**.
+
+You will receive 4,000 pairs of Chinese policy-text segments. Each observation contains:
+
+* `sample_id`: the unique identifier of the observation;
+* `query`: the reference policy-text segment;
+* `direct_match`: the matched policy-text segment.
+
+You must complete the task in **two sequential stages**:
+
+**Stage 1: Select exactly 500 observations that exhibit the clearest, strongest, and most unambiguous NON-ZERO differences in policy-attitude intensity.**
+
+**Stage 2: For those 500 selected observations only, classify the attitude intensity of `direct_match` relative to `query` using the coding scheme specified below.**
+
+IMPORTANT: The purpose of Stage 1 is specifically to identify observations that DISPLAY A MEANINGFUL ATTITUDE-INTENSITY DIFFERENCE. Observations whose correct label would be `0` MUST NOT be selected, even if the absence of a difference is exceptionally clear.
+
+Do not output any intermediate reasoning, scores, candidate lists, explanations, or textual comments. Perform the reasoning internally and return only the final 500 annotations.
+
+### 1. Definition of policy-attitude intensity
+
+In this task, **policy attitude** refers to the intensity with which policymakers treat, prioritize, require, promote, or pursue a policy task. It reflects the decision maker's stance regarding the **priority, urgency, commitment, or strength of implementation** attached to a policy task.
+
+Policy-attitude intensity may be expressed through, for example:
+
+* differences in obligation or requirement;
+* differences in urgency;
+* differences in the strength of policy action;
+* differences in prioritization;
+* differences in commitment;
+* degree adverbs or intensifying/mitigating expressions;
+* verbs that imply different strengths of intervention, implementation, promotion, restriction, support, or enforcement.
+
+Policy-attitude intensity is **not**:
+
+* general semantic similarity between the two texts;
+* positive versus negative sentiment;
+* whether a policy objective is normatively desirable;
+* the importance of the substantive policy domain itself;
+* the factual scale or economic importance of the policy target;
+* your own evaluation of the policy.
+
+Judge only what is expressed linguistically in the two policy-text segments.
+
+### 2. Comparison direction and coding scheme
+
+All labels describe the policy-attitude intensity of **`direct_match` relative to `query`**.
+
+Use the following coding scheme:
+
+* `2`: `direct_match` is **clearly stronger** in policy-attitude intensity than `query`;
+* `1`: `direct_match` is **slightly but meaningfully stronger** than `query`;
+* `0`: there is **no meaningful difference** in policy-attitude intensity;
+* `-1`: `direct_match` is **slightly but meaningfully weaker** than `query`;
+* `-2`: `direct_match` is **clearly weaker** than `query`.
+
+The direction must never be reversed.
+
+The `0` category remains part of the general coding scheme for conceptual completeness, but **it is an exclusion category for Stage 1**. Because Stage 1 selects observations specifically for displaying attitude-intensity differences, no observation judged to have label `0` may appear in the final 500 observations.
+
+### 3. Stage 1: selecting the 500 clearest NON-ZERO observations
+
+Before assigning the final labels, independently inspect all 4,000 observations.
+
+First determine whether each pair contains a **meaningful directional difference in policy-attitude intensity**.
+
+For Stage 1, divide observations conceptually into:
+
+**Eligible observations**
+The comparison supports one of the directional labels:
+
+`{-2, -1, 1, 2}`
+
+**Ineligible observations**
+The comparison supports:
+
+`0`
+
+or the direction of the difference cannot be determined reliably.
+
+Only eligible observations may be considered for the final 500.
+
+A pair for which "there is clearly no difference" is NOT a good Stage-1 candidate. Clarity of equality must not be confused with clarity of difference.
+
+Among eligible observations, select exactly **500 observations with the clearest and most salient attitude-intensity differences**.
+
+Give priority to observations satisfying the following conditions:
+
+1. `query` and `direct_match` express sufficiently comparable policy tasks, actions, or orientations;
+2. there is a genuine non-zero difference in policy-attitude intensity;
+3. the relevant attitude-bearing expressions can be clearly identified;
+4. the direction of the difference is linguistically explicit;
+5. the judgment does not require external knowledge;
+6. the direction is unlikely to change under a reasonable alternative reading;
+7. the intensity contrast itself, rather than a substantive difference in policy content, explains the comparison.
+
+Deprioritize or exclude observations in which:
+
+* the appropriate label would be `0`;
+* the texts differ semantically but not in policy-attitude intensity;
+* the two texts concern substantially different policy actions or objects;
+* one or both texts contain several clauses with conflicting levels of intensity;
+* the comparison depends heavily on missing surrounding context;
+* negation or complex logical structure makes the direction ambiguous;
+* the difference is primarily substantive rather than attitudinal;
+* the relative intensity cannot be judged confidently.
+
+For internal selection, classify NON-ZERO candidates by confidence and salience:
+
+* **Tier A:** highly explicit, strong, and unambiguous directional intensity difference;
+* **Tier B:** clear and meaningful directional intensity difference, but smaller in magnitude or requiring modest semantic interpretation;
+* **Tier C:** weak, ambiguous, context-dependent, or disputable directional difference.
+
+Select Tier A observations before Tier B observations. Avoid Tier C whenever enough Tier A and Tier B observations are available.
+
+Within equally reliable candidates, prefer observations with **larger and more explicit attitude-intensity contrasts**. Thus, all else being equal, an observation that clearly warrants `2` or `-2` should be preferred over one that warrants only `1` or `-1`.
+
+However, do not artificially assign `2` or `-2` merely to make a candidate appear stronger. Label magnitude must still reflect the actual linguistic contrast.
+
+When two observations are otherwise equally suitable for inclusion, apply the following deterministic tie-breaking rules:
+
+1. prefer the observation with the stronger and more explicit linguistic indication of intensity difference;
+2. then prefer the observation with the clearer comparability of the policy task;
+3. then prefer the observation requiring less contextual inference;
+4. if they remain indistinguishable, select the observation with the smaller `sample_id`.
+
+You must select **exactly 500 unique sample IDs**.
+
+Before proceeding to Stage 2, internally verify:
+
+* exactly 500 observations have been selected;
+* every selected observation contains a meaningful directional attitude-intensity difference;
+* none of the selected observations would receive label `0`.
+
+### 4. Stage 2: labeling the selected observations
+
+After the 500 observations have been fixed, independently determine the attitude-intensity difference for each selected pair.
+
+For every selected observation, compare:
+
+`direct_match` relative to `query`
+
+and assign exactly one value from:
+
+`{-2, -1, 1, 2}`.
+
+Because Stage 1 explicitly excludes observations with no meaningful attitude-intensity difference, **the final output MUST NOT contain label `0`.**
+
+If, during Stage 2, you conclude that a previously selected observation should actually receive label `0`, DO NOT output it. Remove that observation from the selected set and replace it with the next-highest-ranked eligible NON-ZERO observation from Stage 1. Repeat this verification until all 500 selected observations have non-zero labels.
+
+Do not use or attempt to infer any external numerical similarity score, dictionary score, or pre-existing label. Your annotation must be based exclusively on the textual contents of `query` and `direct_match`.
+
+### 5. Final consistency check
+
+Before producing the answer, internally verify all of the following:
+
+1. exactly 500 observations are included;
+2. every `sample_id` occurs in the supplied dataset;
+3. every `sample_id` is unique;
+4. every selected pair exhibits a meaningful directional policy-attitude intensity difference;
+5. every label is one of `-2`, `-1`, `1`, or `2`;
+6. **there are zero occurrences of label `0`;**
+7. the comparison direction is always `direct_match` relative to `query`;
+8. the final output is sorted by `sample_id` in ascending order.
+
+If any condition fails, correct the selection internally before producing the final answer.
+
+### 6. Output requirements
+
+Return **exactly 500 lines**.
+
+Each line must contain only:
+
+`(sample_id, label)`
+
+For example:
+
+`(17, 2)`
+`(31, -1)`
+`(104, -2)`
+
+Requirements:
+
+* exactly 500 tuples;
+* exactly one tuple per line;
+* no duplicated `sample_id`;
+* only `sample_id` values appearing in the supplied dataset may be used;
+* `label` must be one of `-2`, `-1`, `1`, or `2`;
+* **label `0` is prohibited in the final output;**
+* sort the final output by `sample_id` in ascending order;
+* do not include Markdown;
+* do not include headings;
+* do not include explanations;
+* do not include confidence scores;
+* do not include any other text before or after the 500 tuples.
+
+The dataset begins below.
+
+<DATA>
+[INSERT THE 4,000 OBSERVATIONS HERE]
+</DATA>

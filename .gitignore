@@ -4,12 +4,6 @@ models/
 # Reproducible embedding caches
 data/embeddings/
 
-# Generated text-matching, robustness, network, and figure outputs.
-# Keep the compact econometric-validation directory eligible for versioning.
-results/*
-!results/DID/
-!results/DID/**
-
 # Large model/checkpoint formats: guard against accidental commits elsewhere
 *.safetensors
 *.bin
@@ -31,4 +25,3 @@ venv/
 Thumbs.db
 ~$*
 tmp/
-
